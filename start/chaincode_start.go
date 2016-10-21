@@ -44,9 +44,9 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 
 	err := stub.PutState("hello_world", []byte(args[0]))
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }
@@ -56,12 +56,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
-	if function == "init" {													//initialize the chaincode state, used as reset
+	if function == "init" { //initialize the chaincode state, used as reset
 		return t.Init(stub, "init", args)
-	} else if function == "write"){
+	} else if function == "write" {
 		return t.write(stub, args)
 	}
-	fmt.Println("invoke did not find func: " + function)					//error
+	fmt.Println("invoke did not find func: " + function) //error
 
 	return nil, errors.New("Received unknown function invocation")
 }
@@ -71,10 +71,10 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	fmt.Println("query is running " + function)
 
 	// Handle different functions
-	if function == "read" {											//read a variable
+	if function == "read" { //read a variable
 		return t.read(stub, args)
 	}
-	fmt.Println("query did not find func: " + function)						//error
+	fmt.Println("query did not find func: " + function) //error
 
 	return nil, errors.New("Received unknown function query")
 }
@@ -83,38 +83,38 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 //This function writes keys/values pairs on the blockchain ledger
 func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-    var name, value string
-    var err error
-    fmt.Println("running write()")
+	var name, value string
+	var err error
+	fmt.Println("running write()")
 
-    if len(args) != 2 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
-    }
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
+	}
 
-    name = args[0]                            //rename for fun
-    value = args[1]
-    err = stub.PutState(name, []byte(value))  //write the variable into the chaincode state
-    if err != nil {
-        return nil, err
-    }
-    return nil, nil
+	name = args[0] //rename for fun
+	value = args[1]
+	err = stub.PutState(name, []byte(value)) //write the variable into the chaincode state
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
 }
 
 //This function returns the desired value from the chaincode
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-    var name, jsonResp string
-    var err error
+	var name, jsonResp string
+	var err error
 
-    if len(args) != 1 {
-        return nil, errors.New("Incorrect number of arguments. Expecting name of the var to query")
-    }
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the var to query")
+	}
 
-    name = args[0]
-    valAsbytes, err := stub.GetState(name)
-    if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
-        return nil, errors.New(jsonResp)
-    }
+	name = args[0]
+	valAsbytes, err := stub.GetState(name)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
+		return nil, errors.New(jsonResp)
+	}
 
-    return valAsbytes, nil
+	return valAsbytes, nil
 }
